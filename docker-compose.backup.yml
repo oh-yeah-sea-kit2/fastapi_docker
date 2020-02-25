@@ -4,11 +4,10 @@ services:
     build: ./postgres
     container_name: postgresql
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: pgdata
       POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     volumes:
       - ./postgres/init:/docker-entrypoint-initdb.d
@@ -19,19 +18,20 @@ services:
       - "3000:3000"
     environment:
       TZ: "Asia/Tokyo"
-      DATABASE_URL: "postgres://root:root@db:5432/pgdata?sslmode=disa    ble"
     volumes:
       - ./src:/myapp
     depends_on:
       - db
-  pgweb:
-    image: sosedoff/pgweb:0.11.6
-    container_name: pgweb
+  pgadmin4:
+    image: dpage/pgadmin4:4.18
+    container_name: pgadmin4
     ports:
-      - "8080:8081"
+      - 8080:80
+    volumes:
+      - ./pgadmin:/var/lib/pgadmin/storage
     environment:
-      DATABASE_URL: "postgres://root:root@db:5432/pgdata?sslmode=disable"
-    depends_on:
-      - db
-
+      PGADMIN_DEFAULT_EMAIL: root
+      PGADMIN_DEFAULT_PASSWORD: root
+    hostname: pgadmin4
+    restart: always
 

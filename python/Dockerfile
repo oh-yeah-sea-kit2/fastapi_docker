@@ -7,17 +7,20 @@ RUN set -ex \
     file \
     && apt-get purge -y --auto-remove
 
+ENV HOME="/myapp"
+WORKDIR $HOME
+
 # install
 RUN pip install pipenv
-ADD Pipfile Pipfile.lock /
+
+ADD Pipfile $HOME/Pipfile
+ADD Pipfile.lock $HOME/Pipfile.lock
 RUN pipenv install --system
 
 # add to application
-ADD app.py /
-ADD service service
-ADD sabr_analytics sabr_analytics
-ADD lahman lahman
+#ADD . $HOME
 
-EXPOSE 8000
-CMD ["uvicorn", "app:api", "--host", "0.0.0.0", "--port", "8000"]
+
+EXPOSE 3000
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "3000"]
 
