@@ -11,6 +11,16 @@
 ### pytest実行
 - pipenv run pytest
 
+## 今後の予定
+- herokuデプロイ(docker-compose)
+- FastAPIとPostgreSQLをつなぐ
+- FastAPIからSQLAlchemyを使う
+- [flask ページネーション](https://www.ravness.com/2019/07/flaskpaginate/)
+- [IPで制限をかける。](https://qiita.com/takuya-andou/items/32a3002aa951b835871b)
+- Firebase Authenticationを使う
+
+
+
 ## 参考URL
 - [RESTful APIをシュッと作る技術 - PythonとFastAPIでバックエンドを5時間ちょいで作ってみた
 ](https://shinyorke.hatenablog.com/entry/fastapi)
