@@ -26,5 +26,5 @@
 ](https://shinyorke.hatenablog.com/entry/fastapi)
 - [FastAPI公式ページ](https://fastapi.tiangolo.com/)
 - [[FastAPI] Python製のASGI Web フレームワーク FastAPIに入門する](https://qiita.com/bee2/items/75d9c0d7ba20e7a4a0e9)
-
+- NoSQL×PaaSで運用するナレッジベース+WebAPI[](https://qiita.com/1ntegrale9/items/c4f315f918bad7a0f180)
 

@@ -18,9 +18,10 @@ ADD Pipfile.lock $HOME/Pipfile.lock
 RUN pipenv install --system
 
 # add to application
-#ADD . $HOME
+ADD ./src $HOME
 
 
-EXPOSE 3000
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "3000", "--reload"]
+#EXPOSE 3000
+#CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "3000", "--reload"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--reload"]
 

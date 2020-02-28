@@ -1,7 +1,7 @@
 version: '3'
 services:
   db:
-    build: ./postgres
+    image: postgres:12.2
     container_name: postgresql
     ports:
       - "5432:5432"
@@ -14,7 +14,8 @@ services:
       - ./postgres/init:/docker-entrypoint-initdb.d
     user: root
   web:
-    build: ./python
+    build: .
+    command: uvicorn app:app --host '0.0.0.0' --port 3000 --reload
     ports:
       - "3000:3000"
     environment:
