@@ -1,7 +1,10 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import Optional, List
-app = FastAPI()
+app = FastAPI(
+    title='sampleAPI',
+    description='サンプル用に作成したAPI!',
+)
 
 @app.get('/')
 async def hello():

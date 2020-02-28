@@ -27,6 +27,7 @@ services:
       - db
   pgweb:
     image: sosedoff/pgweb:0.11.6
+    restart: always
     container_name: pgweb
     ports:
       - "8080:8081"
@@ -34,5 +35,7 @@ services:
       DATABASE_URL: "postgres://root:root@db:5432/pgdata?sslmode=disable"
     depends_on:
       - db
-
+volumes:
+  db:
+    external: false
 
