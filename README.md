@@ -30,4 +30,5 @@
 - http://localhost:3000
 - http://localhost:3000/docs
 - http://localhost:3000/redoc
+- https://sheltered-mountain-37347.herokuapp.com/
 

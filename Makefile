@@ -17,5 +17,10 @@ run-no:
 
 #heroku run bash
 
-# WebPush
-# Reloase
+deploy:
+	heroku container:push web
+	heroku container:release web
+
+logs:
+	heroku logs
+
