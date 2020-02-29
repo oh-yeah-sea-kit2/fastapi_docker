@@ -5,6 +5,10 @@
 - pipenv run python app.py
 - pipenv install {library_name}
 
+### requirements.txtの生成
+- pipenv lock -r > requirements.txt
+
+
 ### pipenv環境でアプリ立ち上げ
 - pipenv run uvicorn app:app --reload
 
@@ -31,4 +35,6 @@
 - http://localhost:3000/docs
 - http://localhost:3000/redoc
 - https://sheltered-mountain-37347.herokuapp.com/
+- https://sheltered-mountain-37347.herokuapp.com/redoc
+- https://sheltered-mountain-37347.herokuapp.com/docs
 
