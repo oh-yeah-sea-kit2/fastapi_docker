@@ -20,7 +20,7 @@
 - [ ] [FastAPI Tutorial: toDo Application](https://github.com/rightcode/FastAPITutrial)
 - [ ] FastAPIとPostgreSQLをつなぐ
 - [ ] FastAPIからSQLAlchemyを使う
-- [] [flask ページネーション](https://www.ravness.com/2019/07/flaskpaginate/)
+- [ ] [flask ページネーション](https://www.ravness.com/2019/07/flaskpaginate/)
 - [ ] [IPで制限をかける。](https://qiita.com/takuya-andou/items/32a3002aa951b835871b)
 - [ ] Firebase Authenticationを使う
 

@@ -1,4 +1,5 @@
-FROM python:3.8
+#FROM python:3.8
+FROM tiangolo/uvicorn-gunicorn:python3.7
 
 RUN set -ex \
     && apt-get update -y --fix-missing \
@@ -11,6 +12,7 @@ ENV HOME="/myapp"
 WORKDIR $HOME
 
 # install
+RUN pip install --upgrade pip
 RUN pip install pipenv
 
 ADD Pipfile $HOME/Pipfile
