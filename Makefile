@@ -14,6 +14,8 @@ run-no:
 	docker-compose build --no-cache
 	docker-compose up -d
 
+exec:
+	docker-compose exec web bash
 
 #heroku run bash
 
