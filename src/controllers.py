@@ -11,6 +11,9 @@ from models import User, Task
 import hashlib
 import re
 
+from mycalendar import MyCalendar
+from datetime import datetime, timedelta
+
 pattern = re.compile(r'\w{4,20}')  # 任意の4~20の英数字を示す正規表現
 pattern_pw = re.compile(r'\w{6,20}')  # 任意の6~20の英数字を示す正規表現
 pattern_mail = re.compile(r'^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$')  # e-mailの正規表現
@@ -37,13 +40,11 @@ def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security
     username = credentials.username
     password = hashlib.md5(credentials.password.encode()).hexdigest()
 
+    today = datetime.now()
+    next_w = today + timedelta(days=7)
+
     # dbよりユーザ名と一致するデータを取得
     user = db.session.query(User).filter(User.username == 'admin').first()
-    if user is not None:
-        task = db.session.query(Task).filter(Task.user_id == user.id).all()
-    else:
-        task = []
-    
     db.session.close()
 
     # 該当ユーザなし
@@ -55,11 +56,31 @@ def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security
             headers={"WWW-Authenticate": "Basic"},
         )
 
+    if user is not None:
+        task = db.session.query(Task).filter(Task.user_id == user.id).all()
+    else:
+        task = []
+    db.session.close()
+
+    """ [new] カレンダー関連 """
+    # カレンダーをHTML形式で取得
+    cal = MyCalendar(username,
+                     {t.deadline.strftime('%Y%m%d'): t.done for t in task})  # 予定がある日付をキーとして渡す
+    
+    cal = cal.formatyear(today.year, 4)  # カレンダーをHTMLで取得
+
+    # 直近のタスクだけでいいので、リストを書き換える
+    task = [t for t in task if today <= t.deadline <= next_w]
+    links = [t.deadline.strftime('/todo/' + username + '/%Y/%m/%d') for t in task]  # 直近の予定リンク
+    
     res = templates.TemplateResponse(
-        'admin.html', {
+        'admin.html',
+        {
             'request': request,
             'user': user,
             'task': task,
+            'links': links,
+            'calender': cal
         }
     )
     return res
