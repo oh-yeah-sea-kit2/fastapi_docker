@@ -9,6 +9,12 @@ import db
 from models import User, Task
 
 import hashlib
+import re
+
+pattern = re.compile(r'\w{4,20}')  # 任意の4~20の英数字を示す正規表現
+pattern_pw = re.compile(r'\w{6,20}')  # 任意の6~20の英数字を示す正規表現
+pattern_mail = re.compile(r'^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$')  # e-mailの正規表現
+
 
 app = FastAPI(
     title='FastAPIでつくるtoDoアプリケーション',
@@ -56,6 +62,54 @@ def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security
             'task': task,
         }
     )
-
     return res
 
+
+async def register(request: Request):
+    if request.method == 'GET':
+        return templates.TemplateResponse('register.html',
+                                          {'request': request,
+                                           'username': '',
+                                           'error': []})
+    if request.method == 'POST':
+        data = await request.form()
+        username = data.get('username')
+        password = data.get('password')
+        password_tmp = data.get('password_tmp')
+        mail = data.get('mail')
+
+        error = []
+        tmp_user = db.session.query(User).filter(User.username == username).first()
+        # 怒涛のエラー処理
+        if tmp_user is not None:
+            error.append('同じユーザ名のユーザが存在します。')
+        if password != password_tmp:
+            error.append('入力したパスワードが一致しません。')
+        if pattern.match(username) is None:
+            error.append('ユーザ名は4~20文字の半角英数字にしてください。')
+        if pattern_pw.match(password) is None:
+            error.append('パスワードは6~20文字の半角英数字にしてください。')
+        if pattern_mail.match(mail) is None:
+            error.append('正しくメールアドレスを入力してください。')
+        if error:
+            return templates.TemplateResponse(
+                'register.html',
+                {
+                    'request': request,
+                    'username': username,
+                    'error': error
+                }
+            )
+        user = User(username, password, mail)
+        db.session.add(user)
+        db.session.commit()
+        db.session.close()
+        return templates.TemplateResponse(
+            'complete.html',
+            {
+                'request': request,
+                'username': username
+            }
+        )
+
+        

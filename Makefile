@@ -17,6 +17,10 @@ run-no:
 exec:
 	docker-compose exec web bash
 
+log:
+	docker-compose logs -f web
+
+
 #heroku run bash
 
 deploy:

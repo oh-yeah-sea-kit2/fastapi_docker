@@ -15,6 +15,7 @@ sabr = "*"
 requests = "*"
 pytest = "*"
 jinja2 = "*"
+python-multipart = "*"
 
 [requires]
 python_version = "3.8"
