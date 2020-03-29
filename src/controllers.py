@@ -165,4 +165,38 @@ async def done(request: Request, credentials: HTTPBasicCredentials = Depends(sec
 
     return RedirectResponse('/admin')
 
-    return 
+async def add(request: Request, credentials: HTTPBasicCredentials = Depends(security)):
+    username = auth(credentials)
+
+    user = db.session.query(User).filter(User.username == username).first()
+
+    data = await request.form()
+    year = int(data['year'])
+    month = int(data['month'])
+    day = int(data['day'])
+    hour = int(data['hour'])
+    minute = int(data['minute'])
+
+    deadline = datetime(year=year, month=month, day=day, hour=hour, minute=minute)
+    task = Task(user.id, data['content'], deadline)
+    db.session.add(task)
+    db.session.commit()
+    db.session.close()
+
+    return RedirectResponse('/admin')
+
+def delete(request: Request, task_id, credentials: HTTPBasicCredentials = Depends(security)):
+    username = auth(credentials)
+    user = db.session.query(User).filter(User.username == username).first()
+    
+    task = db.session.query(Task).filter(Task.id == task_id).first()
+    # UserIDが異なればリダイレクト
+    if task.user_id != user.id:
+        return RedirectResponse('/admin')
+    
+    # 削除してコミット
+    db.session.delete(task)
+    db.session.commit()
+    db.session.close()
+
+    return RedirectResponse('/admin')
