@@ -14,6 +14,9 @@ import re
 from mycalendar import MyCalendar
 from datetime import datetime, timedelta
 
+from auth import auth
+from starlette.responses import RedirectResponse
+
 pattern = re.compile(r'\w{4,20}')  # 任意の4~20の英数字を示す正規表現
 pattern_pw = re.compile(r'\w{6,20}')  # 任意の6~20の英数字を示す正規表現
 pattern_mail = re.compile(r'^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$')  # e-mailの正規表現
@@ -36,32 +39,20 @@ def index(request: Request):
     return templates.TemplateResponse('index.html', {'request': request})
 
 def admin(request: Request, credentials: HTTPBasicCredentials = Depends(security)):
-    # Basic認証
-    username = credentials.username
-    password = hashlib.md5(credentials.password.encode()).hexdigest()
+    username = auth(credentials)
 
     today = datetime.now()
     next_w = today + timedelta(days=7)
 
     # dbよりユーザ名と一致するデータを取得
     user = db.session.query(User).filter(User.username == 'admin').first()
-    db.session.close()
-
-    # 該当ユーザなし
-    if user is None or user.password != password:
-        error = 'ユーザ名か、パスワードが異なっています'
-        raise HTTPException(
-            status_code=HTTP_401_UNAUTHORIZED,
-            detail=error,
-            headers={"WWW-Authenticate": "Basic"},
-        )
 
     if user is not None:
         task = db.session.query(Task).filter(Task.user_id == user.id).all()
     else:
         task = []
     db.session.close()
-
+    
     """ [new] カレンダー関連 """
     # カレンダーをHTML形式で取得
     cal = MyCalendar(username,
@@ -133,4 +124,45 @@ async def register(request: Request):
             }
         )
 
-        
+def detail(request: Request, username, year, month, day,
+    credentials: HTTPBasicCredentials = Depends(security)):
+    """URLパターンは引数で取得可能"""
+    username_tmp = auth(credentials)
+    if username_tmp != username:
+        return RedirectResponse("/")
+    
+    user = db.session.query(User).filter(User.username == username).first()
+    task = db.session.query(Task).filter(Task.user_id == user.id).all()
+    db.session.close()
+
+    theday = '{}{}{}'.format(year, month.zfill(2), day.zfill(2))
+    task = [t for t in task if t.deadline.strftime('%Y%m%d') == theday]
+    
+    res = templates.TemplateResponse('detail.html',
+        {
+            'request': request,
+            'username': username,
+            'task': task,
+            'year': year,
+            'month': month,
+            'day': day
+        }
+    )
+    return res
+
+async def done(request: Request, credentials: HTTPBasicCredentials = Depends(security)):
+    username = auth(credentials)
+    user = db.session.query(User).filter(User.username == username).first()
+    task = db.session.query(Task).filter(Task.user_id == user.id).all()
+
+    data = await request.form()
+    t_dones = data.getlist('done[]')
+    for t in task:
+        if str(t.id) in t_dones:
+            t.done = True
+    db.session.commit()
+    db.session.close()
+
+    return RedirectResponse('/admin')
+
+    return 
