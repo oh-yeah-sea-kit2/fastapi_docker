@@ -24,6 +24,8 @@ log:
 #heroku run bash
 
 deploy:
+	heroku git:remote -a sheltered-mountain-37347
+	heroku container:login
 	heroku container:push web
 	heroku container:release web
 

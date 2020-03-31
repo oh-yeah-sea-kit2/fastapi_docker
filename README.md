@@ -1,5 +1,10 @@
 # fastapi_docker
 
+## 気になること
+- ログアウト機能をつけたい
+- 参考URL
+  - https://gist.github.com/nilsdebruin/8b36cd98c9949a1a87e3a582f70146f1
+
 ## コマンド
 - pipenv shell
 - pipenv run python app.py
